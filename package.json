@@ -1,0 +1,21 @@
+{
+  "name": "otools",
+  "version": "0.0.1",
+  "description": "simple mixin and a few functions for working with js objects",
+  "author": "polotek (Marco Rogers)",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/polotek/otools.git"
+  },
+  "keywords": [
+    "mixin"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "tape": "*"
+  }
+}
