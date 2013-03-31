@@ -1,13 +1,12 @@
 var otools = require('./index')
-  , test = require('tape')
+  , test = require('tape');
 
 var mixin = otools.mixin
   , each = otools.each
   , eachOwn = otools.eachOwn
+  , enhanceBuiltInObject = otools.enhanceBuiltInObject;
 
 test('mixin mixes properties onto target', function(t) {
-  t.plan(2)
-
   var source = { foo: 'Foo', bar: 'Bar', baz: 'Baz' }
     , target = {}
     , result;
@@ -16,53 +15,55 @@ test('mixin mixes properties onto target', function(t) {
 
   t.equal(target, result);
   t.deepEquals(result, source);
-})
+
+  t.end();
+});
 
 test('mixin mixes in multiple sources', function(t) {
-  t.plan(2)
-
   var source1 = { foo: 'Foo' }
     , source2 = { bar: 'Bar' }
     , empty = {}
-    , result
+    , result;
 
-  result = mixin({}, source1, source2)
+  result = mixin({}, source1, source2);
 
-  t.deepEquals(result, { foo: 'Foo', bar: 'Bar' })
+  t.deepEquals(result, { foo: 'Foo', bar: 'Bar' });
 
-  result = mixin({})
+  result = mixin({});
 
-  t.deepEquals(result, empty)
-})
+  t.deepEquals(result, empty);
+
+  t.end();
+});
 
 test('mixin skips falsy sources', function(t) {
-  t.plan(1)
-
   var source1 = { foo: 'Foo' }
     , source2 = { bar: 'Bar' }
-    , result
+    , result;
 
-  result = mixin({}, source1, null, source2)
+  result = mixin({}, source1, null, source2);
 
-  t.deepEquals(result, { foo: 'Foo', bar: 'Bar' })
-})
+  t.deepEquals(result, { foo: 'Foo', bar: 'Bar' });
+
+  t.end();
+});
 
 test('mixin does not mix in non-enumerable properties', function(t) {
-  t.plan(2)
-
   var source = { foo: 'Foo' }
-    , result
+    , result;
 
   Object.defineProperty(source, 'bar', {
     value: 'Bar'
     , enumerable: false
-  })
-  t.equal(source.bar, 'Bar')
+  });
+  t.equal(source.bar, 'Bar');
 
-  result = mixin({}, source)
+  result = mixin({}, source);
 
-  t.deepEquals(result, { foo: 'Foo' })
-})
+  t.deepEquals(result, { foo: 'Foo' });
+
+  t.end();
+});
 
 test('each loops over all enumerable properties', function(t) {
   var proto = { foo: 'Foo' }
@@ -74,31 +75,29 @@ test('each loops over all enumerable properties', function(t) {
       }
     })
     , ctr = 0
-    , result = {}
+    , result = {};
 
-  obj.bar = 'Bar'
+  obj.bar = 'Bar';
   Object.defineProperty(obj, 'fizz', {
     value: 'Fizz'
     , enumerable: false
-  })
+  });
 
-  t.equal(obj.foo, 'Foo')
-  t.equal(obj.baz, 'Baz')
+  t.equal(obj.foo, 'Foo');
+  t.equal(obj.baz, 'Baz');
 
   each(obj, function(value, key) {
-    ctr++
+    ctr++;
     result[key] = value;
-  })
+  });
 
-  t.equal(ctr, 2)
-  t.deepEqual(result, { foo: 'Foo', bar: 'Bar' })
+  t.equal(ctr, 2);
+  t.deepEqual(result, { foo: 'Foo', bar: 'Bar' });
 
-  t.end()
-})
+  t.end();
+});
 
 test('eachOwn loops over all own enumerable properties', function(t) {
-  t.plan()
-
   var proto = { foo: 'Foo' }
     , obj = Object.create(proto, {
       baz: {
@@ -108,24 +107,38 @@ test('eachOwn loops over all own enumerable properties', function(t) {
       }
     })
     , ctr = 0
-    , result = {}
+    , result = {};
 
-  obj.bar = 'Bar'
+  obj.bar = 'Bar';
   Object.defineProperty(obj, 'fizz', {
     value: 'Fizz'
     , enumerable: false
-  })
+  });
 
-  t.equal(obj.foo, 'Foo')
-  t.equal(obj.baz, 'Baz')
+  t.equal(obj.foo, 'Foo');
+  t.equal(obj.baz, 'Baz');
 
   eachOwn(obj, function(value, key) {
-    ctr++
+    ctr++;
     result[key] = value;
-  })
+  });
 
-  t.equal(ctr, 1)
-  t.deepEqual(result, { bar: 'Bar' })
+  t.equal(ctr, 1);
+  t.deepEqual(result, { bar: 'Bar' });
 
-  t.end()
-})
+  t.end();
+});
+
+test('enhanceBuiltInObject adds otools functions to Object', function(t) {
+  t.equal(Object.mixin, undefined);
+  t.equal(Object.each, undefined);
+  t.equal(enhanceBuiltInObject.active, false);
+
+  enhanceBuiltInObject();
+
+  t.equal(Object.mixin, mixin);
+  t.equal(Object.each, each);
+  t.equal(enhanceBuiltInObject.active, true);
+
+  t.end();
+});

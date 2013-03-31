@@ -4,7 +4,7 @@ var each = function(o, fn) {
   for(var k in o) {
     fn.call(o, o[k], k);
   }
-}
+};
 
 var eachOwn = function(o, fn) {
   var keys = Object.keys(o);
@@ -13,7 +13,7 @@ var eachOwn = function(o, fn) {
     k = keys[i];
     fn.call(o, o[k], k);
   }
-}
+};
 
 var mixin = function(target, source) {
   var args = arguments.length > 2 ? slice.call(arguments,1) : [source];
@@ -28,8 +28,22 @@ var mixin = function(target, source) {
   }
 
   return target;
-}
+};
+
+var enhanceBuiltInObject = function() {
+  if(enhanceBuiltInObject.active) { return; }
+
+  eachOwn(module.exports, function(fn, name) {
+    if(Object[name]) { throw new Error('Built-in Object already has ' + name); }
+
+    Object[name] = fn;
+  });
+
+  enhanceBuiltInObject.active = true;
+};
+enhanceBuiltInObject.active = false;
 
 exports.each = each;
 exports.eachOwn = eachOwn;
 exports.mixin = mixin;
+exports.enhanceBuiltInObject = enhanceBuiltInObject;

@@ -48,3 +48,15 @@ eachOwn(obj2, function(value, key) {
 
 // Nothing to say!
 ```
+
+**enhanceBuiltInObject()** - Add these convenience methods onto the built-in `Object`. Use at your own risk.
+
+The otools functions will be added to the built-in `Object`. The properties will be writable and configurable but NOT enumerable, i.e. they will not show up if you do `Object.keys(Object)` or `otools.each(Object, fn)`.
+
+```
+otools.enhanceBuiltInObject();
+
+var opts = Object.mixin({}, defaults, opts);
+
+otools.enhanceBuiltInObject.active === true
+```
